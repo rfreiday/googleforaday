@@ -1,0 +1,21 @@
+﻿@model Google.SearchEngine.Model.SearchRequest
+
+<div id="body">
+    <section class="content-wrapper main-content clear-fix">
+        <div class="col-md-12 text-center">
+            <h4>Search</h4>
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <div class="row" style="margin: 10px">
+                    <b>@Html.TextBoxFor(model => model.RequestValue)</b>
+                </div>
+                <div class="row">
+                    <div class="row">
+                        <input class="btn btn-success btn-md" type="submit" name="GoogleSearch" id="GoogleSearch" value="Google Search" />
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+</div>

@@ -1,0 +1,30 @@
+﻿@using Google.SearchEngine.Model;
+@using Google.Host.Controllers;
+
+@{var keywords = ((StatisticsController)this.ViewContext.Controller).Indexer.Keywords; }
+<div class="col-md-12">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Top 20 Indexed Words</div>
+        <div class="panel-body">
+            <div>
+                <table class="table" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%">Keyword</th>
+                            <th style="width: 25%; text-align: right">Pages</th>
+                            <th style="width: 25%; text-align: right">References</th>
+                        </tr>
+                    </thead>
+                    @foreach (var keyword in keywords.OrderByDescending(o => o.Value.Count).Take(20))
+                    {
+                        <tr>
+                            <td>@Html.ActionLink(@keyword.Key, "SearchResults", "Search", new { searchValue = @keyword.Key }, null)</td>
+                            <td style="text-align: right">@keyword.Value.PageReferences.Values.Count</td>
+                            <td style="text-align: right">@keyword.Value.Count</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

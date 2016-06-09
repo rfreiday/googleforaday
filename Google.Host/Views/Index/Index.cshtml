@@ -1,0 +1,22 @@
+﻿@model Google.SearchEngine.Model.SearchRequest
+
+<div id="body">
+    <section class="content-wrapper main-content clear-fix">
+        <div class="col-md-12 text-center">
+            <h4>Web Page Indexer</h4>
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <div class="row" style="margin: 10px">
+                    <b>@Html.TextBoxFor(model => model.RequestValue)</b>
+                </div>
+                <div class="col-sm-12 text-center" style="margin: 10px">
+                    <div class="row">
+                        <input class="btn btn-success btn-md" type="submit" name="IndexPage" id="IndexPage" value="Index Page" />
+                        <input class="btn btn-danger btn-md" type="submit" name="ClearIndexes" id="ClearIndexes" value="Clear Indexes" />
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+</div>

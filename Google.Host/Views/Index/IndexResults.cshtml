@@ -1,0 +1,24 @@
+﻿@model Google.SearchEngine.Model.WebPage
+
+<div id="body">
+    <section class="content-wrapper main-content clear-fix">
+        <div class="col-sm-12 text-center">
+            <h4>Index Results</h4>
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Index Results</div>
+                    <div class="panel-body">
+                        <div>
+                            @Html.LabelFor(model => model.Url):
+                            <a href="@Html.DisplayFor(model => model.Url)">@Html.DisplayFor(model => model.Url)</a><br/>
+                            @Html.LabelFor(model => model.Title):
+                            @Html.DisplayFor(model => model.Title)<br />
+                            @Html.LabelFor(model => model.IndexDate):
+                            @Html.DisplayFor(model => model.IndexDate)<br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

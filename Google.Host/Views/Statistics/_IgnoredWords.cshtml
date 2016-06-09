@@ -1,0 +1,30 @@
+﻿@using Google.SearchEngine.Model;
+@using Google.Host.Controllers;
+
+@{var ignoredWords = ((StatisticsController)this.ViewContext.Controller).Indexer.IgnoredWords; }
+<div class="col-md-4">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Ignored Words</div>
+        <div class="panel-body">
+            <div>
+                @foreach (IgnoredWordType wordType in Enum.GetValues(typeof(IgnoredWordType)))
+                {
+                    <h5><a data-toggle="collapse" href="#@wordType.ToString()">@wordType.ToString()</a></h5>
+                    <div id="@wordType.ToString()" class="panel-collapse collapse">
+                        <ul>
+                            @foreach (var ignoredWord in ignoredWords.Values)
+                            {
+                                if (ignoredWord.Type.Equals(wordType))
+                                {
+                                    {
+                                        <li>@ignoredWord.Word.ToString()</li>
+                                    }
+                                }
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

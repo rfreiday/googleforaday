@@ -1,0 +1,32 @@
+﻿@model Google.SearchEngine.Model.WebKeyword
+
+<div id="body">
+    <section class="content-wrapper main-content clear-fix">
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Search Results: <b>@Model.Word</b></div>
+                <div class="panel-body">
+                    <div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Web URL</th>
+                                    <th>Title</th>
+                                    <th style="text-align: right">Instances</th>
+                                </tr>
+                            </thead>
+                            @foreach (Google.SearchEngine.Model.WebPage page in Model.RankedPages)
+                            {
+                                <tr>
+                                    <td><a href="@page.Url" target="_blank">@page.Url</a></td>
+                                    <td>@page.Title</td>
+                                    <td style="text-align: right">@Model.PageReferences[page].ToString()</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
