@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Google" Class="DataClassesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=FREIDAY_LAPTOP\SQLEXPRESS;Initial Catalog=Google;Integrated Security=True" SettingsObjectName="Google.SearchEngine.Properties.Settings" SettingsPropertyName="GoogleConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.web_domain" Member="web_domains">
+    <Type Name="web_domain">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="domain_name" Type="System.String" DbType="VarChar(256) NOT NULL" CanBeNull="false" />
+      <Association Name="web_domain_web_page" Member="web_pages" ThisKey="id" OtherKey="web_domain_id" Type="web_page" />
+    </Type>
+  </Table>
+  <Table Name="dbo.web_page_link" Member="web_page_links">
+    <Type Name="web_page_link">
+      <Column Name="web_page_id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="linked_page_id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="web_page_web_page_link" Member="web_page" ThisKey="web_page_id" OtherKey="id" Type="web_page" IsForeignKey="true" />
+      <Association Name="web_page_web_page_link1" Member="web_page1" ThisKey="linked_page_id" OtherKey="id" Type="web_page" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.web_keyword" Member="web_keywords">
+    <Type Name="web_keyword">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="keyword" Type="System.String" DbType="VarChar(256) NOT NULL" CanBeNull="false" />
+      <Column Name="last_search_date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="web_keyword_web_page_keyword" Member="web_page_keywords" ThisKey="id" OtherKey="web_keyword_id" Type="web_page_keyword" />
+    </Type>
+  </Table>
+  <Table Name="dbo.web_page" Member="web_pages">
+    <Type Name="web_page">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="web_domain_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="page_url" Type="System.String" DbType="VarChar(256) NOT NULL" CanBeNull="false" />
+      <Column Name="index_date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="title" Type="System.String" DbType="VarChar(256)" CanBeNull="true" />
+      <Association Name="web_page_web_page_link" Member="web_page_links" ThisKey="id" OtherKey="web_page_id" Type="web_page_link" />
+      <Association Name="web_page_web_page_link1" Member="web_page_links1" ThisKey="id" OtherKey="linked_page_id" Type="web_page_link" />
+      <Association Name="web_page_web_page_keyword" Member="web_page_keywords" ThisKey="id" OtherKey="web_page_id" Type="web_page_keyword" />
+      <Association Name="web_domain_web_page" Member="web_domain" ThisKey="web_domain_id" OtherKey="id" Type="web_domain" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.web_page_keyword" Member="web_page_keywords">
+    <Type Name="web_page_keyword">
+      <Column Name="web_keyword_id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="web_page_id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="web_keyword_web_page_keyword" Member="web_keyword" ThisKey="web_keyword_id" OtherKey="id" Type="web_keyword" IsForeignKey="true" />
+      <Association Name="web_page_web_page_keyword" Member="web_page" ThisKey="web_page_id" OtherKey="id" Type="web_page" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>
