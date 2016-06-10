@@ -5,12 +5,11 @@ using System.Xml.Linq;
 using System.Net;
 using System.IO;
 using System.Configuration;
+using System.Threading.Tasks;
 using HtmlAgilityPack;
 
 using Google.SearchEngine.Model;
 using Google.Common;
-using System.Threading.Tasks;
-using System.Text;
 
 namespace Google.SearchEngine
 {
@@ -42,6 +41,14 @@ namespace Google.SearchEngine
             LoadIgnoredWords();
         }
 
+        public WebKeyword SearchKeyword(string searchValue)
+        {
+            WebKeyword keyword = Keywords.Where(o => o.Key.Equals(searchValue, StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value;
+            keyword.LastSearch = DateTime.Now;
+            keyword.SearchCount++;
+            return keyword;
+        }
+
         /// <summary>
         /// This method will start the "web crawler" process to index a given page
         /// </summary>
@@ -56,6 +63,11 @@ namespace Google.SearchEngine
         {
             Uri uri = GetUriFromUrl(url);
             return _indexedPages.Where(o => o.Key.Equals(url, StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value;
+        }
+
+        public WebKeyword GetKeyword(string searchValue)
+        {
+            return Keywords.Where(o => o.Key.Equals(searchValue, StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value;
         }
 
         public void ClearIndexes()
@@ -128,43 +140,53 @@ namespace Google.SearchEngine
             {
                 return null;
             }
+
             var root = html.DocumentNode;
             var nodes = root.Descendants();
 
+            nodes
+                .Where(n => n.Name == "script" || n.Name == "style")
+                .ToList()
+                .ForEach(n => n.Remove());
+
             var titleNode = nodes.Where(o => o.Name.Equals("Title", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
             var bodyNode = nodes.Where(o => o.Name.Equals("Body", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-            string title = uri.AbsoluteUri;
-            if (titleNode != null)
-                title = titleNode.InnerText.Replace("\t", string.Empty).Replace("\r\n", string.Empty);
-
-            webPage = new WebPage(uri.AbsoluteUri, title);
-            IndexKeywords(webPage, bodyNode);
-
-            _indexedPages.Add(url, webPage);
-
-            var anchors = root.Descendants("a");
-            foreach (HtmlNode node in anchors)
+            if (bodyNode != null)
             {
-                HtmlAttribute href = node.Attributes.Where(o => o.Name.Equals("href", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-                if (href != null)
+                string title = uri.AbsoluteUri;
+                if (titleNode != null)
+                    title = titleNode.InnerText.Replace("\t", string.Empty).Replace("\r\n", string.Empty);
+
+                webPage = new WebPage(uri.AbsoluteUri, title);
+                IndexKeywords(webPage, bodyNode.OuterHtml);
+
+                _indexedPages.Add(url, webPage);
+
+                var anchors = root.Descendants("a");
+                foreach (HtmlNode node in anchors)
                 {
-                    string hrefUrl = href.Value;
-                    if (!hrefUrl.ToLower().Contains("mailto"))
+                    HtmlAttribute href = node.Attributes.Where(o => o.Name.Equals("href", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    if (href != null)
                     {
-                        if (!hrefUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) &
-                            !hrefUrl.StartsWith("www.", StringComparison.OrdinalIgnoreCase))
+                        string hrefUrl = href.Value;
+                        if (!hrefUrl.ToLower().Contains("mailto"))
                         {
-                            Uri uriToUse = new Uri(uri, hrefUrl);
-                            if (GetPage(uriToUse.AbsoluteUri) == null)
+                            if (!hrefUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) &
+                                !hrefUrl.StartsWith("www.", StringComparison.OrdinalIgnoreCase))
                             {
-                                var linkedPage = LoadWebPage(uriToUse.AbsoluteUri, level);
-                                if (linkedPage != null)
-                                    webPage.Links.Add(linkedPage.Result);
+                                Uri uriToUse = new Uri(uri, hrefUrl);
+                                if (GetPage(uriToUse.AbsoluteUri) == null)
+                                {
+                                    var linkedPage = LoadWebPage(uriToUse.AbsoluteUri, level);
+                                    if (linkedPage != null)
+                                        webPage.Links.Add(linkedPage.Result);
+                                }
                             }
                         }
                     }
                 }
             }
+
             GlobalCachingProvider.Instance.AddItem(CacheObjectType.IndexedPages, _indexedPages);
             return Task.FromResult<WebPage>(webPage);
         }
@@ -173,34 +195,17 @@ namespace Google.SearchEngine
         /// This method produces a list of keywords which can be searched on.
         /// </summary>
         /// <param name="webPage"></param>
-        private void IndexKeywords(WebPage webPage, HtmlNode parentNode)
+        //private void IndexKeywords(WebPage webPage, HtmlNode parentNode)
+        private void IndexKeywords(WebPage webPage, string htmlText)
         {
             try
             {
                 // First, strip out all "nodes", leaving us with just a collection of values (between the nodes)
-                string outerHtml = parentNode.OuterHtml.ToLower().Replace("\r\n", string.Empty).Trim();
-                StringBuilder sb = new StringBuilder();
-                int valueStartPosition = outerHtml.IndexOf(">") + 1;
-                int valueEndPosition = outerHtml.IndexOf("<", valueStartPosition - 1);
-                string value;
-                while (valueStartPosition >= 0)
-                {
-                    if (valueEndPosition <= 0)
-                        valueEndPosition = outerHtml.Length;
-                    value = outerHtml.Substring(valueStartPosition, valueEndPosition - valueStartPosition).Trim();
-                    if (!string.IsNullOrEmpty(value))
-                        sb.Append(value);
-
-                    valueStartPosition = outerHtml.IndexOf(">", valueStartPosition) + 1;
-                    if (valueStartPosition > 0)
-                        valueEndPosition = outerHtml.IndexOf("<", valueStartPosition - 1);
-                    else
-                        break;
-                }
+                htmlText = htmlText.RemoveSections('<', '>').RemoveSections('[', ']');
 
                 // Next, delimit the values into seperate words
                 char[] delimiterChars = { ' ', ',', '.', ':', '-', '\t' };
-                string[] words = sb.ToString().Split(delimiterChars);
+                string[] words = htmlText.Split(delimiterChars);
                 foreach (string s in words)
                 {
                     string keywordKey = s.Trim().ToLower().Replace("(", string.Empty).Replace(")", string.Empty);
