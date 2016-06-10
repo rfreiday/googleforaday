@@ -21,7 +21,7 @@ namespace Google.Host.Controllers
             {
                 try
                 {
-                    WebKeyword keyword = Indexer.Keywords.Where(o => o.Key.Equals(searchValue, StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value;
+                    WebKeyword keyword = Indexer.SearchKeyword(searchValue);
                     if (keyword != null)
                         return View(keyword);
                     else
