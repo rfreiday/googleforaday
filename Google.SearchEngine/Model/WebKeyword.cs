@@ -45,5 +45,7 @@ namespace Google.SearchEngine.Model
         public Dictionary<WebPage, int> PageReferences { get; private set;}
 
         public DateTime? LastSearch { get; set; }
+
+        public int SearchCount { get; set; }
     }
 }
