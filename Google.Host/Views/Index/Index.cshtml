@@ -3,12 +3,12 @@
 <div id="body">
     <section class="content-wrapper main-content clear-fix">
         <div class="col-md-12 text-center">
-            <h4>Web Page Indexer</h4>
+            <span class="row"><img src="~/Images/google_logo_sm.png" alt="Google"><b>Indexer</b></span>
             @using (Html.BeginForm())
             {
                 @Html.AntiForgeryToken()
                 <div class="row" style="margin: 10px">
-                    <b>@Html.TextBoxFor(model => model.RequestValue)</b>
+                    <b>@Html.TextBoxFor(model => model.RequestValue, new { @class = "input" })</b>
                 </div>
                 <div class="col-sm-12 text-center" style="margin: 10px">
                     <div class="row">

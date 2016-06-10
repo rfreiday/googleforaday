@@ -2,25 +2,23 @@
 @using Google.Host.Controllers;
 
 @{var keywords = ((StatisticsController)this.ViewContext.Controller).Indexer.Keywords; }
-<div class="col-md-12">
+<div class="col-md-6">
     <div class="panel panel-default">
-        <div class="panel-heading">Top 10 Indexed Words</div>
+        <div class="panel-heading">Most Recent Searches</div>
         <div class="panel-body">
             <div>
                 <table class="table" style="width: 100%">
                     <thead>
                         <tr>
-                            <th style="width: 50%">Keyword</th>
-                            <th style="width: 25%; text-align: right">Pages</th>
-                            <th style="width: 25%; text-align: right">References</th>
+                            <th style="width: 60%">Keyword</th>
+                            <th style="width: 40%; text-align: right">Last Search</th>
                         </tr>
                     </thead>
-                    @foreach (var keyword in keywords.OrderByDescending(o => o.Value.Count).Take(10))
+                    @foreach (var keyword in keywords.Where(o => o.Value.LastSearch != null).OrderByDescending(o => o.Value.LastSearch).Take(10))
                     {
                         <tr>
                             <td>@Html.ActionLink(@keyword.Key, "SearchResults", "Search", new { searchValue = @keyword.Key }, null)</td>
-                            <td style="text-align: right">@keyword.Value.PageReferences.Values.Count</td>
-                            <td style="text-align: right">@String.Format("{0:#,##0}", keyword.Value.Count)</td>
+                            <td style="text-align: right">@keyword.Value.LastSearch</td>
                         </tr>
                     }
                 </table>

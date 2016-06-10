@@ -1,0 +1,13 @@
+﻿@using Google.SearchEngine.Model;
+@using Google.Host.Controllers;
+
+@{var indexer = ((StatisticsController)this.ViewContext.Controller).Indexer; }
+<div class="col-md-6">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Summary</div>
+        <div class="panel-body">
+            Total Words: <span class="badge">@String.Format("{0:#,##0}", indexer.Keywords.Count)</span>
+            Total Pages: <span class="badge">@String.Format("{0:#,##0}", @indexer.IndexedPages.Count)</span>
+        </div>
+    </div>
+</div>

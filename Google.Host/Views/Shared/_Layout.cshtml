@@ -11,22 +11,21 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <header>
+    <header style="margin-bottom: 50px">
         <div class="content-wrapper">
-            <div class="float-left">
-                <p class="site-title">
-                    <a href="~/">Google for a Day</a></p>
-            </div>
-            <div class="float-right">
-                <nav>
-                    <ul id="menu" class="nav nav-pills">
-                        <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, null)</li>
-                        <li>@Html.ActionLink("Index", "Index", "Index", new { area = "" }, null)</li>
-                        <li>@Html.ActionLink("Search", "Index", "Search", new { area = "" }, null)</li>
-                        <li>@Html.ActionLink("Statistics", "Index", "Statistics", new { area = "" }, null)</li>
+            <nav class="navbar navbar-collapse">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a href="~/"><img src="~/Images/google_logo_sm.png" alt="Google for a Day" /></a>
+                    </div>
+                    <ul class="nav navbar-nav">
+                        <li><a href="~/"><span class="glyphicon glyphicon-search"></span> Search</a></li>
+                        <li><a href="~/Index"><span class="glyphicon glyphicon-list"></span> Index</a></li>
+                        <li><a href="~/Statistics"><span class="glyphicon glyphicon-info-sign"></span> Statistics</a></li>
+                        <li><a href="~/Instructions"><span class="glyphicon glyphicon-question-sign"></span> Instructions</a></li>
                     </ul>
-                </nav>
-            </div>
+                </div>
+            </nav>
         </div>
     </header>
     <div class="container">

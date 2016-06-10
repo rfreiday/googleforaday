@@ -2,8 +2,8 @@
 @using Google.Host.Controllers;
 
 @{var indexedPages = ((StatisticsController)this.ViewContext.Controller).Indexer.IndexedPages.Values; }
-<div class="col-md-8">
-    <div class="panel panel-primary">
+<div class="col-md-12">
+    <div class="panel panel-default">
         <div class="panel-heading">Most Recently Indexed Pages</div>
         <div class="panel-body">
             <div>
@@ -11,14 +11,14 @@
                     <thead>
                         <tr>
                             <th style="width: 70%">URL</th>
-                            <th style="width: 30%">Index Date</th>
+                            <th style="width: 30%; text-align: right">Index Date</th>
                         </tr>
                     </thead>
                     @foreach (var indexedPage in indexedPages.OrderByDescending(o => o.IndexDate).Take(10))
                     {
                         <tr>
                             <td><a href="@indexedPage.Url" target="_blank">@indexedPage.Url</a></td>
-                            <td>@indexedPage.IndexDate</td>
+                            <td style="text-align: right">@indexedPage.IndexDate</td>
                         </tr>
                     }
                 </table>
